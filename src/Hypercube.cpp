@@ -50,7 +50,7 @@ int Hypercube::countWeight(int i, int j) {
 
 void Hypercube::printGraph() {
     std::cout << "Hypercube graph (adjacency list representation):\n";
-    
+
     for (const auto& [vertex, neighbors] : graph) {
         std::cout << vertex << " (";
         std::bitset<32> vertexBits(vertex);
@@ -60,4 +60,8 @@ void Hypercube::printGraph() {
         }
         std::cout << "\n";
     }
+}
+
+std::unordered_map<int, std::vector<std::pair<int, int>>> Hypercube::getGraph() {
+    return graph;
 }

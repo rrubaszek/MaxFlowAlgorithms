@@ -6,8 +6,8 @@
 
 class Hypercube {
 private:
-    std::unordered_map<int, std::vector<std::pair<int, int>>> graph;
     int dimension;
+    std::unordered_map<int, std::vector<std::pair<int, int>>> graph;
 
     int hammingWeight(int n);
     int countZeroes(int n);
@@ -15,4 +15,5 @@ private:
 public:
     Hypercube(size_t dimension);
     void printGraph();
+    std::unordered_map<int, std::vector<std::pair<int, int>>> getGraph();
 };
