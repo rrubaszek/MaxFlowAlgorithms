@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-int main() {
-
-    std::cout << "Hello world\n";
+int main(int argc, char* argv[]) {
+    Hypercube cube (atoi(argv[1]));
+    cube.printGraph();
     return 0;
 }
