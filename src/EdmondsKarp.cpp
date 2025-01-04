@@ -60,9 +60,13 @@ EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
             int u = parent[v];
             residual.capacity[u][v] -= new_flow;
             residual.capacity[v][u] += new_flow;
+
+            residual.edge_flow[u][v] += new_flow;
+            residual.edge_flow[v][u] -= new_flow;
+
             v = u;
         }
     } while (new_flow > 0);
 
-    return { flow, parent };
+    return { flow, residual.edge_flow };
 }

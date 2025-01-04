@@ -8,7 +8,7 @@ private:
     size_t size;
     struct Path {
         int flow;
-        std::vector<int> path;
+        std::unordered_map<int, std::unordered_map<int, int>> edge_flow;
     };
 
     ResidualNetwork residual;
