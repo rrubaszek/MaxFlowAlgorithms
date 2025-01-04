@@ -5,85 +5,64 @@
 #include <iostream>
 
 EdmondsKarp::EdmondsKarp(Hypercube& graph) {
-    residual = graph.getGraph();
-    size = residual.size();
-    for (const auto& [u, list] : graph.getGraph()) {
-        for (const auto& [v, weight] : list) {
-            residual[v].emplace_back(u, weight);
+    this->size = graph.getVertices();
+    auto m_graph = graph.getGraph();
+    
+    for (const auto& [u, edges] : m_graph) {
+        for (const auto& [v, weight] : edges) {
+            residual.vertices[u].push_back(v);
+            residual.capacity[u][v] = weight;
         }
     }
+
+    std::cout << "SIZE " << size << "\n";
 }
 
-bool EdmondsKarp::bfs(int s, int t, std::vector<int>& parent) {
-    std::queue<int> q;
+int EdmondsKarp::bfs(int s, int t, std::vector<int>& parent) {
+    std::queue<std::pair<int, int>> q;
     std::vector<bool> visited (size, false);
 
-    q.push(s);
+    q.push({ s, std::numeric_limits<int>::max() });
     visited.at(s) = true;
 
     while (!q.empty()) {
-        int v = q.front();
+        int v = q.front().first;
+        int flow = q.front().second;
         q.pop();
 
-        for (const auto& [u, weight] : residual[v]) {
-            if (!visited.at(u) && weight > 0) {
-                q.push(u);
+        for (int u : residual.vertices[v]) {
+            if (!visited.at(u) && residual.capacity[v][u] > 0) {
                 visited.at(u) = true;
                 parent.at(u) = v;
+                int new_flow = std::min(flow, residual.capacity[v][u]);
 
-                if (u == t) return true;
+                if (u == t) {
+                    return new_flow;
+                }
+                q.push({ u, new_flow });
             }
         }
     }
 
-    return false;
+    return 0;
 }
 
 EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
     int flow = 0;
-    std::vector<int> path (size, -1);
+    int new_flow;
+    std::vector<int> parent (size, -1);
     
-    while (bfs(source, target, path)) {
-        int path_flow = std::numeric_limits<int>::max();
-
-        for (int t = target; t != source; t = path.at(t)) {
-            int u = path.at(t);
-            // Find the edge capacity in the residual graph
-            for (const auto& [v, weight] : residual[u]) {
-                if (v == t) {
-                    path_flow = std::min(path_flow, weight);
-                    break;
-                }
-            }
+    do {
+        new_flow = bfs(source, target, parent);
+        flow += new_flow;
+        int v = target;
+        while (v != source) {
+            int u = parent[v];
+            residual.capacity[u][v] -= new_flow;
+            residual.capacity[v][u] += new_flow;
+            v = u;
         }
+    } while (new_flow > 0);
 
-        for (int t = target; t != source; t = path.at(t)) {
-            int u = path.at(t);
-            // Update the forward edge in the residual graph
-            for (auto& [v, weight] : residual[u]) {
-                if (v == t) {
-                    weight -= path_flow; // Reduce the capacity on the forward edge
-                    break;
-                }
-            }
-
-            bool reverseEdgeFound = false;
-            for (auto& [v, weight] : residual[t]) {
-                if (v == u) {
-                    weight += path_flow; // Increase the capacity on the reverse edge
-                    reverseEdgeFound = true;
-                    break;
-                }
-            }
-
-            // If reverse edge does not exist, add a new one with the flow
-            if (!reverseEdgeFound) {
-                residual[t].emplace_back(u, path_flow); // Add reverse edge with pathFlow
-            }
-        }
-        flow += path_flow;
-        std::cout << flow << "\n";
-    }
-
-    return { flow, path };
+    return { flow, parent };
 }

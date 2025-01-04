@@ -8,7 +8,7 @@
 
 Hypercube::Hypercube(size_t dimension) {
     this->dimension = dimension;
-    size_t vertices = 1 << dimension;
+    this->vertices = 1 << dimension;
 
     for (size_t i = 0; i < vertices; ++i) {
         std::bitset<32> x(i);
@@ -20,7 +20,7 @@ Hypercube::Hypercube(size_t dimension) {
         }
     }
 
-    graph[vertices - 1] = std::vector<std::pair<int, int>>(); // Make sure that the destination is present (empty vector)
+    graph[vertices - 1] = std::vector<std::pair<int, int>>();
 }
 
 int Hypercube::hammingWeight(int n) {
@@ -64,4 +64,8 @@ void Hypercube::printGraph() {
 
 std::unordered_map<int, std::vector<std::pair<int, int>>> Hypercube::getGraph() {
     return graph;
+}
+
+size_t Hypercube::getVertices() {
+    return vertices;
 }

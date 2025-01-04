@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Hypercube.hpp"
+#include "ResidualNetwork.hpp"
 
 class EdmondsKarp {
 private:
     size_t size;
-    struct Path
-    {
+    struct Path {
         int flow;
         std::vector<int> path;
     };
 
-    std::unordered_map<int, std::vector<std::pair<int, int>>> residual;
-    bool bfs(int s, int t, std::vector<int>& parent);
+    ResidualNetwork residual;
+    int bfs(int s, int t, std::vector<int>& parent);
     
 public:
     EdmondsKarp(Hypercube& graph);

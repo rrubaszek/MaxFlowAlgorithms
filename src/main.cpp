@@ -5,9 +5,9 @@
 
 int main(int argc, char* argv[]) {
     Hypercube cube (atoi(argv[1]));
-    cube.printGraph();
+    // cube.printGraph();
     EdmondsKarp alg (cube);
-    auto res = alg.run(0, 7);
+    auto res = alg.run(0, cube.getVertices() - 1);
     std::cout << res.flow << "\n";
     return 0;
 }
