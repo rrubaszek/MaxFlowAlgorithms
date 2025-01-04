@@ -1,21 +1,30 @@
 #include "Hypercube.hpp"
 #include "EdmondsKarp.hpp"
+#include "GenerateSolverCode.hpp"
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 int main(int argc, char* argv[]) {
-    if (argc < 1 || std::string(argv[1]) != "--size") {
-        std::cerr << "Size not provided. Usage: --size {value}\n";
+    std::unordered_map<std::string, std::string> args;
+
+    for (int i = 1; i < argc; i++) {
+        if (std::string(argv[i]) == "--printFlow") {
+            args[argv[i]] = "";
+        }
+        else {  
+            args[argv[i]] = argv[i + 1];
+            i++;
+        }
     }
-    else {
-        Hypercube cube (atoi(argv[2]));
+    if (args.count("--size")) {
+        Hypercube cube (stoi(args.at("--size")));
         EdmondsKarp alg (cube);
         auto res = alg.run(0, cube.getVertices() - 1);
-
         std::cout << res.flow << "\n";
 
-        if (argc > 3 && std::string(argv[3]) == "--printFlow") {
+        if (args.count("--printFlow")) {
             for (const auto& [u, list] : res.edge_flow) {
                 for (const auto& [v, flow] : list) {
                     if (flow > 0) {
@@ -24,7 +33,16 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+
+        if (args.count("--glpk")) {
+            std::string filename = args.at("--glpk");
+            GenerateSolverCode(cube.getGraph(), filename, 0, cube.getVertices() - 1);
+        }
     }
+    else {
+        std::cerr << "Size not provided. Usage: --size {val}\n";
+    }
+
 
     return 0;
 }

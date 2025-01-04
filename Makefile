@@ -11,7 +11,7 @@ BUILD_DIR = build
 PROGRAMS = main
 
 # Common source files
-COMMON_SRC = Hypercube.cpp EdmondsKarp.cpp
+COMMON_SRC = Hypercube.cpp EdmondsKarp.cpp GenerateSolverCode.cpp
 COMMON_OBJ = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(COMMON_SRC))
 
 MAIN_SRC = main.cpp $(COMMON_SRC)

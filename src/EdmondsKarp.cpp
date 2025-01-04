@@ -12,6 +12,7 @@ EdmondsKarp::EdmondsKarp(Hypercube& graph) {
         for (const auto& [v, weight] : edges) {
             residual.vertices[u].push_back(v);
             residual.capacity[u][v] = weight;
+            residual.capacity[v][u] = 0;
         }
     }
 
@@ -52,8 +53,7 @@ EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
     int new_flow;
     std::vector<int> parent (size, -1);
     
-    do {
-        new_flow = bfs(source, target, parent);
+    while(new_flow = bfs(source, target, parent)) {
         flow += new_flow;
         int v = target;
         while (v != source) {
@@ -66,7 +66,7 @@ EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
 
             v = u;
         }
-    } while (new_flow > 0);
+    }
 
     return { flow, residual.edge_flow };
 }
