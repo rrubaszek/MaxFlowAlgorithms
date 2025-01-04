@@ -53,6 +53,7 @@ EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
     int new_flow;
     std::vector<int> parent (size, -1);
     
+    int augmenting_paths_no = 0;
     while(new_flow = bfs(source, target, parent)) {
         flow += new_flow;
         int v = target;
@@ -66,7 +67,10 @@ EdmondsKarp::Path EdmondsKarp::run(int source, int target) {
 
             v = u;
         }
+
+        augmenting_paths_no++;
     }
+    std::cerr << "no. of augmenting paths: " << augmenting_paths_no << "\n";
 
     return { flow, residual.edge_flow };
 }
